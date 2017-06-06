@@ -1,0 +1,40 @@
+{
+  "name": "firebase-denormalizer",
+  "version": "0.0.0",
+  "author": "Denes Pal <dsdenes@gmail.com>",
+  "description": "",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest src/",
+    "watch": "jest src/ --watch",
+    "build": "babel src/ -d lib",
+    "prepublish": "yarn build",
+    "release-patch": "npm version patch && npm publish",
+    "release-minor": "npm version minor && npm publish",
+    "release-major": "npm version major && npm publish"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-jest": "^20.0.3",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-preset-flow": "^6.23.0",
+    "firebase": "^4.1.1",
+    "flow-bin": "^0.46.0",
+    "jest": "^20.0.4"
+  },
+  "dependencies": {
+    "camelcase": "^4.1.0",
+    "firebase-key": "^1.0.4",
+    "lodash.compact": "^3.0.1",
+    "lodash.flattendeep": "^4.4.0",
+    "lodash.intersection": "^4.4.0",
+    "lodash.map": "^4.6.0",
+    "lodash.mapvalues": "^4.6.0",
+    "lodash.mergewith": "^4.6.0",
+    "lodash.omit": "^4.5.0",
+    "lodash.pick": "^4.4.0",
+    "pluralize": "^5.0.0"
+  }
+}

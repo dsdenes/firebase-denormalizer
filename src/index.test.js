@@ -10,14 +10,6 @@ import {
 
 import firebase from 'firebase';
 
-const config = {
-  apiKey: "AIzaSyDLOW4voY8C_v-ClaqbtnwnT0O3rmqv1-c",
-  authDomain: "fir-denormalizer.firebaseapp.com",
-  databaseURL: "https://fir-denormalizer.firebaseio.com",
-  projectId: "fir-denormalizer",
-  storageBucket: "fir-denormalizer.appspot.com",
-  messagingSenderId: "949167701661"
-};
 firebase.initializeApp(config);
 
 /*
@@ -27,7 +19,7 @@ firebase.initializeApp(config);
 const modelDenormalizer = FirebaseDenormalizer(firebase.database());
 const dogs = modelDenormalizer('dogs');
 
-describe.skip('getPathString', () => {
+describe('getPathString', () => {
   it('should work with one string parameter', () => {
     expect(getPathString()).toBe('');
     expect(getPathString('/')).toBe('');
@@ -58,7 +50,7 @@ describe.skip('getPathString', () => {
 
 });
 
-describe.skip('getKey', () => {
+describe('getKey', () => {
   it('should encode keys', () => {
     expect(getKey('')).toBe('');
     expect(getKey('key')).toBe('key');
@@ -70,7 +62,7 @@ describe.skip('getKey', () => {
   });
 });
 
-describe.skip('getDenormalizedCollectionName', () => {
+describe('getDenormalizedCollectionName', () => {
   it('should encode keys', () => {
     expect(getDenormalizedCollectionName('', '')).toBe('');
     expect(getDenormalizedCollectionName('john', 'doe')).toBe('johnDoes');
@@ -84,7 +76,7 @@ describe('denormalizer', () => {
     firebase.database().ref().remove();
   });
 
-  it.skip('should push, and remove', async () => {
+  it('should push, and remove', async () => {
     dogs.filterableProperty('type');
     dogs.filterableProperty('kennel');
 
@@ -123,7 +115,7 @@ describe('denormalizer', () => {
     expect(await dogs.get(['dogKennels', 'john\'sKennel', id2])).toBe(null);
   });
 
-  it.skip('should push and update', async () => {
+  it('should push and update', async () => {
     dogs.filterableProperty('type');
     dogs.filterableProperty('kennel');
 
@@ -154,7 +146,7 @@ describe('denormalizer', () => {
     expect(await dogs.getById(id2)).toEqual(aDog);
   });
 
-  it.skip('should push and set', async () => {
+  it('should push and set', async () => {
     dogs.filterableProperty('type');
     dogs.filterableProperty('kennel');
 

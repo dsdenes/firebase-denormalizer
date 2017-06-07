@@ -10,7 +10,7 @@ Usage
 import firebase from 'firebase';
 firebase.initializeApp(<your config>);
 
-import FirebaseDenormalizer from './index';
+import FirebaseDenormalizer from 'firebase-denormalizer';
 const modelDenormalizer = FirebaseDenormalizer(firebase.database());
 const dogs = modelDenormalizer('dogs');
 

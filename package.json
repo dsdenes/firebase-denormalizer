@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "camelcase": "^4.1.0",
+    "config": "^1.26.1",
     "firebase-key": "^1.0.4",
     "lodash.compact": "^3.0.1",
     "lodash.flattendeep": "^4.4.0",

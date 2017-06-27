@@ -1,11 +1,9 @@
-Install
--------
+## Install
 ```bash
 $ npm install firebase-denormalizer
 ```
 
-Usage
------
+## Usage
 ```javascript
 import firebase from 'firebase';
 firebase.initializeApp(<your config>);
@@ -52,7 +50,7 @@ dogs.filterableProperty('kennel');
   /*
    * And from now, you can filter on multiple properties
    */
-  await dogs.find({
+  await dogs.findValue({
     type: 'wolfdog',
     kennel: 'John Doe Kennel',
     name: 'Lolly'
@@ -60,3 +58,10 @@ dogs.filterableProperty('kennel');
 
 })();
 ```
+
+## API
+### .findValue(\<filter\>) => Promise => collections
+### .find(\<filter\>) => Result EventEmitter
+
+#### Result EventEmitter
+.on('value', collections)

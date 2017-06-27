@@ -6,6 +6,7 @@ import mergeWith from 'lodash.mergewith';
 import intersection from 'lodash.intersection';
 import pick from 'lodash.pick';
 import pluralize from 'pluralize';
+import EventEmitter from 'events';
 import {
   encode as firebaseKeyEncode,
   decode as firebaseKeyDecode
@@ -29,7 +30,8 @@ export default function firebaseDenormalizer(firebase) {
       setById,
       remove,
       removeById,
-      find
+      find,
+      findValue
     });
 
     function filterableProperty(propName) {
@@ -118,7 +120,8 @@ export default function firebaseDenormalizer(firebase) {
       return snapshot.val();
     }
 
-    async function find(payload) {
+    function find(payload) {
+      const resultEventEmitter = new EventEmitter();
       const findActions = [];
       for (let filterKey in payload) {
         const filterValue = payload[filterKey];
@@ -128,9 +131,32 @@ export default function firebaseDenormalizer(firebase) {
           findActions.push(filterByNonDenormalizedProperty(modelName, filterKey, filterValue));
         }
       }
-      const resultsIntersect = getFiltersIntersection(await Promise.all(findActions));
-      const completeResults = await completeResultObjects(resultsIntersect);
-      return completeResults;
+
+      Promise.all(findActions)
+        .then(compact)
+        .then(getFiltersIntersection)
+        .then(completeResultObjects)
+        .then(result => onValue(resultEventEmitter, result));
+
+      return resultEventEmitter;
+    }
+
+    function findValue(payload) {
+      const resultEvents = find(payload);
+      return new Promise(resolve => {
+        resultEvents.once('value', snapshot => resolve(snapshot.val()));
+      });
+    }
+
+    async function onValue(resultEventEmitter, result) {
+      resultEventEmitter.emit('value', resultToSnapshot(result));
+    }
+
+    function resultToSnapshot(result) {
+      return {
+        key: modelName,
+        val: () => result
+      }
     }
 
     async function filterByDenormalizedProperty(modelName, filterKey, filterValue) {

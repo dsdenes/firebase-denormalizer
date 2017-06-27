@@ -8,9 +8,10 @@ import {
   getKey
 } from './index';
 
+import config from 'config';
 import firebase from 'firebase';
 
-firebase.initializeApp(config);
+firebase.initializeApp(config.get('firebase'));
 
 /*
 * firebase.ref()
@@ -170,44 +171,105 @@ describe('denormalizer', () => {
     expect(await dogs.getById(id2)).toEqual(aDog);
   });
 
-  it('should find by properties', async () => {
-    dogs.filterableProperty('type');
-    dogs.filterableProperty('kennel');
+  describe('findValue', () => {
 
-    await dogs.push({ name: 'Petee', type: 'wolfdog', kennel: "John's kennel"});
-    await dogs.push({ name: 'Lolly', type: 'wolfdog', kennel: "John's kennel"});
-    await dogs.push({ type: 'pumi', kennel: "John's kennel"});
-    await dogs.push({ type: 'pumi', kennel: "Barbara's kennel"});
-    await dogs.push({ type: 'puli', kennel: "Barbara's kennel"});
+    it('should find by properties', async () => {
+      dogs.filterableProperty('type');
+      dogs.filterableProperty('kennel');
 
-    expect(await dogs.find({
-      name: 'Petee'
-    })).toHaveLength(1);
+      await dogs.push({ name: 'Petee', type: 'wolfdog', kennel: "John's kennel"});
+      await dogs.push({ name: 'Lolly', type: 'wolfdog', kennel: "John's kennel"});
+      await dogs.push({ type: 'pumi', kennel: "John's kennel"});
+      await dogs.push({ type: 'pumi', kennel: "Barbara's kennel"});
+      await dogs.push({ type: 'puli', kennel: "Barbara's kennel"});
 
-    expect(await dogs.find({
-      name: 'Petee',
-      kennel: 'John\'s kennel'
-    })).toHaveLength(1);
+      expect(await dogs.findValue({
+        name: 'Petee'
+      })).toHaveLength(1);
 
-    expect(await dogs.find({
-      kennel: 'John\'s kennel'
-    })).toHaveLength(3);
+      expect(await dogs.findValue({
+        name: 'Petee',
+        kennel: 'John\'s kennel'
+      })).toHaveLength(1);
 
-    expect(await dogs.find({
-      type: 'wolfdog',
-      kennel: 'John\'s kennel'
-    })).toHaveLength(2);
+      expect(await dogs.findValue({
+        kennel: 'John\'s kennel'
+      })).toHaveLength(3);
 
-    expect(await dogs.find({
-      type: 'pumi',
-      kennel: 'John\'s kennel'
-    })).toHaveLength(1);
+      expect(await dogs.findValue({
+        type: 'wolfdog',
+        kennel: 'John\'s kennel'
+      })).toHaveLength(2);
 
-    expect(await dogs.find({
-      type: 'puli',
-      kennel: 'John\'s kennel'
-    })).toHaveLength(0);
+      expect(await dogs.findValue({
+        type: 'pumi',
+        kennel: 'John\'s kennel'
+      })).toHaveLength(1);
+
+      expect(await dogs.findValue({
+        type: 'puli',
+        kennel: 'John\'s kennel'
+      })).toHaveLength(0);
+
+    });
 
   });
+
+  describe('find', () => {
+
+    beforeEach(async () => {
+      dogs.filterableProperty('type');
+      dogs.filterableProperty('kennel');
+
+      await dogs.push({ name: 'Petee', type: 'wolfdog', kennel: "John's kennel"});
+      await dogs.push({ name: 'Lolly', type: 'wolfdog', kennel: "John's kennel"});
+      await dogs.push({ type: 'pumi', kennel: "John's kennel"});
+      await dogs.push({ type: 'pumi', kennel: "Barbara's kennel"});
+      await dogs.push({ type: 'puli', kennel: "Barbara's kennel"});
+    });
+
+    it('should find by properties', async () => {
+
+      const result = dogs.find({
+        type: 'wolfdog'
+      });
+
+      result.once('value', snapshot => {
+        expect(snapshot.val()).toHaveLength(2);
+      });
+
+      // expect(await dogs.findValue({
+      //   name: 'Petee'
+      // })).toHaveLength(1);
+      //
+      // expect(await dogs.findValue({
+      //   name: 'Petee',
+      //   kennel: 'John\'s kennel'
+      // })).toHaveLength(1);
+      //
+      // expect(await dogs.findValue({
+      //   kennel: 'John\'s kennel'
+      // })).toHaveLength(3);
+      //
+      // expect(await dogs.findValue({
+      //   type: 'wolfdog',
+      //   kennel: 'John\'s kennel'
+      // })).toHaveLength(2);
+      //
+      // expect(await dogs.findValue({
+      //   type: 'pumi',
+      //   kennel: 'John\'s kennel'
+      // })).toHaveLength(1);
+      //
+      // expect(await dogs.findValue({
+      //   type: 'puli',
+      //   kennel: 'John\'s kennel'
+      // })).toHaveLength(0);
+
+    });
+
+  });
+
+
 
 });

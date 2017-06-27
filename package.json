@@ -10,6 +10,7 @@
     "watch": "jest src/ --watch",
     "build": "babel src/ -d lib",
     "prepublish": "yarn build",
+    "postpublish": "PACKAGE_VERSION=$(node -pe \"require('./package.json').version\") && git tag $PACKAGE_VERSION && git push --tags",
     "release-patch": "npm version patch && npm publish",
     "release-minor": "npm version minor && npm publish",
     "release-major": "npm version major && npm publish"

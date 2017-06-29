@@ -1,5 +1,5 @@
 {
-  "presets": ["flow", "es2015", "es2016"],
+  "presets": ["flow", "es2015"],
   "plugins": [
     ["transform-object-rest-spread", { "useBuiltIns": true }]
   ]

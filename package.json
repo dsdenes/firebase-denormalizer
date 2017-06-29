@@ -1,6 +1,6 @@
 {
   "name": "firebase-denormalizer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Denes Pal <dsdenes@gmail.com>",
   "description": "Automatic denormalized collections housekeeping and multi key filtering for Firebase Database",
   "main": "lib/index.js",
@@ -20,7 +20,6 @@
     "babel-jest": "^20.0.3",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
-    "babel-preset-es2016": "^6.24.1",
     "babel-preset-flow": "^6.23.0",
     "firebase": "^4.1.1",
     "flow-bin": "^0.46.0",

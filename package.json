@@ -1,6 +1,6 @@
 {
   "name": "firebase-denormalizer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Denes Pal <dsdenes@gmail.com>",
   "description": "Automatic denormalized collections housekeeping and multi key filtering for Firebase Database",
   "main": "lib/index.js",

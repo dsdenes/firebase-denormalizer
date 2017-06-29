@@ -13,6 +13,8 @@ import {
 } from 'firebase-key';
 import camelcase from 'lodash.camelcase';
 
+import regeneratorRuntime from "regenerator-runtime";
+
 export default function firebaseDenormalizer(firebase) {
 
   return function modelDenormalizer(modelName) {

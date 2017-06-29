@@ -11,7 +11,7 @@ import {
   encode as firebaseKeyEncode,
   decode as firebaseKeyDecode
 } from 'firebase-key';
-import camelcase from 'camelcase';
+import camelcase from 'lodash.camelcase';
 
 export default function firebaseDenormalizer(firebase) {
 

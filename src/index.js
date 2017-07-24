@@ -9,9 +9,7 @@ import pluralize from 'pluralize';
 import EventEmitter from 'events';
 import {
   encode as firebaseKeyEncode,
-  decode as firebaseKeyDecode
-} from 'firebase-key';
-import camelcase from 'lodash.camelcase';
+} from 'firebase-encode';
 
 import regeneratorRuntime from "regenerator-runtime";
 
@@ -223,11 +221,14 @@ export function fullObjectPriority(objValue, srcValue) {
 }
 
 export function getKey(name) {
-  return firebaseKeyEncode(camelcase(name));
+  return firebaseKeyEncode(name);
 }
 
 export function getDenormalizedCollectionName(modelName, joinModel) {
-  return getKey(`${pluralize.singular(modelName)} ${pluralize.plural(joinModel)}`);
+  if (!modelName || !joinModel) {
+    throw new Error('Model name or joined model name is missing!');
+  }
+  return getKey(`${pluralize.singular(modelName)}-${pluralize.plural(joinModel)}`);
 }
 
 export function getPathArray(...paths) {

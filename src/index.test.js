@@ -18,7 +18,7 @@ firebase.initializeApp(config.get('firebase'));
 * */
 
 const modelDenormalizer = FirebaseDenormalizer(firebase.database());
-const dogs = modelDenormalizer('dogs');
+const dogs = modelDenormalizer('Dogs');
 
 describe('getPathString', () => {
   it('should work with one string parameter', () => {
@@ -55,19 +55,22 @@ describe('getKey', () => {
   it('should encode keys', () => {
     expect(getKey('')).toBe('');
     expect(getKey('key')).toBe('key');
-    expect(getKey('John Doe')).toBe('johnDoe');
-    expect(getKey('John--Doe')).toBe('johnDoe');
-    expect(getKey('John/Doe/')).toBe('john!2FDoe!2F');
-    expect(getKey('John.Doe.')).toBe('johnDoe');
-    expect(getKey('John\'s kennel')).toBe('john\'sKennel');
+    expect(getKey('john Doe')).toBe('john Doe');
+    expect(getKey('John Doe')).toBe('John Doe');
+    expect(getKey('John--Doe')).toBe('John--Doe');
+    expect(getKey('John/Doe/')).toBe('John%2FDoe%2F');
+    expect(getKey('John.Doe.')).toBe('John%2EDoe%2E');
+    expect(getKey('John\'s kennel')).toBe('John\'s kennel');
   });
 });
 
 describe('getDenormalizedCollectionName', () => {
   it('should encode keys', () => {
-    expect(getDenormalizedCollectionName('', '')).toBe('');
-    expect(getDenormalizedCollectionName('john', 'doe')).toBe('johnDoes');
-    expect(getDenormalizedCollectionName('john doe', 'john doe')).toBe('johnDoeJohnDoes');
+    expect(() => getDenormalizedCollectionName('', '')).toThrow();
+    expect(getDenormalizedCollectionName('johns', 'doe')).toBe('john-does');
+    expect(getDenormalizedCollectionName('John', 'doe')).toBe('John-does');
+    expect(getDenormalizedCollectionName('john does', 'john doe')).toBe('john doe-john does');
+    expect(getDenormalizedCollectionName('John Doe', 'John Doe')).toBe('John Doe-John Does');
   });
 });
 
@@ -80,6 +83,8 @@ describe('denormalizer', () => {
   it('should push, and remove', async () => {
     dogs.filterableProperty('type');
     dogs.filterableProperty('kennel');
+    dogs.filterableProperty('Type');
+    dogs.filterableProperty('Kennel');
 
     const aDog = {
       type: 'wolfdog',
@@ -92,28 +97,32 @@ describe('denormalizer', () => {
     expect(id2).toBeTruthy();
 
     expect(await dogs.getById(id1)).toEqual(aDog);
-    expect(await dogs.get(['dogTypes', 'wolfdog', id1])).toBe(true);
-    expect(await dogs.get(['dogKennels', 'john\'sKennel', id1])).toBe(true);
+    expect(await dogs.get(['Dog-types', 'wolfdog', id1])).toBe(true);
+    expect(await dogs.get(['Dog-kennels', 'John\'s kennel', id1])).toBe(true);
+    expect(await dogs.get(['Dog-Types', 'wolfdog', id1])).toBe(null);
+    expect(await dogs.get(['Dog-Kennels', 'John\'s kennel', id1])).toBe(null);
 
     expect(await dogs.getById(id2)).toEqual(aDog);
-    expect(await dogs.get(['dogTypes', 'wolfdog', id2])).toBe(true);
-    expect(await dogs.get(['dogKennels', 'john\'sKennel', id2])).toBe(true);
+    expect(await dogs.get(['Dog-types', 'wolfdog', id2])).toBe(true);
+    expect(await dogs.get(['Dog-kennels', 'John\'s kennel', id2])).toBe(true);
 
     await dogs.removeById(id1);
     expect(await dogs.getById(id1)).toBe(null);
-    expect(await dogs.get(['dogTypes', 'wolfdog', id1])).toBe(null);
-    expect(await dogs.get(['dogKennels', 'john\'sKennel', id1])).toBe(null);
+    expect(await dogs.get(['Dog-types', 'wolfdog', id1])).toBe(null);
+    expect(await dogs.get(['Dog-kennels', 'John\'s kennel', id1])).toBe(null);
+
     expect(await dogs.getById(id2)).toEqual(aDog);
-    expect(await dogs.get(['dogTypes', 'wolfdog', id2])).toBe(true);
-    expect(await dogs.get(['dogKennels', 'john\'sKennel', id2])).toBe(true);
+    expect(await dogs.get(['Dog-types', 'wolfdog', id2])).toBe(true);
+    expect(await dogs.get(['Dog-kennels', 'John\'s kennel', id2])).toBe(true);
 
     await dogs.removeById(id2);
     expect(await dogs.getById(id1)).toBe(null);
-    expect(await dogs.get(['dogTypes', 'wolfdog', id1])).toBe(null);
-    expect(await dogs.get(['dogKennels', 'john\'sKennel', id1])).toBe(null);
+    expect(await dogs.get(['Dog-types', 'wolfdog', id1])).toBe(null);
+    expect(await dogs.get(['Dog-kennels', 'John\'s kennel', id1])).toBe(null);
+
     expect(await dogs.getById(id2)).toEqual(null);
-    expect(await dogs.get(['dogTypes', 'wolfdog', id2])).toBe(null);
-    expect(await dogs.get(['dogKennels', 'john\'sKennel', id2])).toBe(null);
+    expect(await dogs.get(['Dog-types', 'wolfdog', id2])).toBe(null);
+    expect(await dogs.get(['Dog-kennels', 'John\'s kennel', id2])).toBe(null);
   });
 
   it('should push and update', async () => {
@@ -134,15 +143,15 @@ describe('denormalizer', () => {
 
     await dogs.updateById(id1, { type: 'pumi' });
     expect(await dogs.getById(id1)).toEqual({...aDog, name: 'newName', type: 'pumi'});
-    expect(await dogs.get(['dogTypes', 'wolfdog', id1])).toBe(null);
-    expect(await dogs.get(['dogTypes', 'pumi', id1])).toBe(true);
-    expect(await dogs.get(['dogKennels', 'john\'sKennel', id1])).toBe(true);
+    expect(await dogs.get(['Dog-types', 'wolfdog', id1])).toBe(null);
+    expect(await dogs.get(['Dog-types', 'pumi', id1])).toBe(true);
+    expect(await dogs.get(['Dog-kennels', 'John\'s kennel', id1])).toBe(true);
 
     await dogs.updateById(id1, { type: 'wolfdog' });
     expect(await dogs.getById(id1)).toEqual({...aDog, name: 'newName', type: 'wolfdog'});
-    expect(await dogs.get(['dogTypes', 'wolfdog', id1])).toBe(true);
-    expect(await dogs.get(['dogTypes', 'pumi', id1])).toBe(null);
-    expect(await dogs.get(['dogKennels', 'john\'sKennel', id1])).toBe(true);
+    expect(await dogs.get(['Dog-types', 'wolfdog', id1])).toBe(true);
+    expect(await dogs.get(['Dog-types', 'pumi', id1])).toBe(null);
+    expect(await dogs.get(['Dog-kennels', 'John\'s kennel', id1])).toBe(true);
 
     expect(await dogs.getById(id2)).toEqual(aDog);
   });
@@ -165,8 +174,8 @@ describe('denormalizer', () => {
 
     await dogs.setById(id1, { name: 'new name', type: 'pumi', kennel: 'Barbara\'s kennel' });
     expect(await dogs.getById(id1)).toEqual({name: 'new name', type: 'pumi', kennel: 'Barbara\'s kennel' });
-    expect(await dogs.get(['dogTypes', 'wolfdog', id1])).toBe(null);
-    expect(await dogs.get(['dogTypes', 'pumi', id1])).toBe(true);
+    expect(await dogs.get(['Dog-types', 'wolfdog', id1])).toBe(null);
+    expect(await dogs.get(['Dog-types', 'pumi', id1])).toBe(true);
 
     expect(await dogs.getById(id2)).toEqual(aDog);
   });
@@ -219,52 +228,44 @@ describe('denormalizer', () => {
 
     beforeEach(async () => {
       dogs.filterableProperty('type');
-      dogs.filterableProperty('kennel');
+      dogs.filterableProperty('Kennel');
 
-      await dogs.push({ name: 'Petee', type: 'wolfdog', kennel: "John's kennel"});
-      await dogs.push({ name: 'Lolly', type: 'wolfdog', kennel: "John's kennel"});
-      await dogs.push({ type: 'pumi', kennel: "John's kennel"});
-      await dogs.push({ type: 'pumi', kennel: "Barbara's kennel"});
-      await dogs.push({ type: 'puli', kennel: "Barbara's kennel"});
+      await dogs.push({ name: 'Petee', type: 'wolfdog', Kennel: "John's kennel"});
+      await dogs.push({ name: 'Lolly', type: 'wolfdog', Kennel: "John's kennel"});
+      await dogs.push({ type: 'pumi', Kennel: "John's kennel"});
+      await dogs.push({ type: 'pumi', Kennel: "Barbara's kennel"});
+      await dogs.push({ type: 'puli', Kennel: "Barbara's kennel"});
     });
 
     it('should find by properties', async () => {
 
-      const result = dogs.find({
-        type: 'wolfdog'
-      });
+      expect(await dogs.findValue({
+        type: 'pumi'
+      })).toHaveLength(2);
 
-      result.once('value', snapshot => {
-        expect(snapshot.val()).toHaveLength(2);
-      });
+      expect(await dogs.findValue({
+        name: 'Petee',
+        Kennel: 'John\'s kennel'
+      })).toHaveLength(1);
 
-      // expect(await dogs.findValue({
-      //   name: 'Petee'
-      // })).toHaveLength(1);
-      //
-      // expect(await dogs.findValue({
-      //   name: 'Petee',
-      //   kennel: 'John\'s kennel'
-      // })).toHaveLength(1);
-      //
-      // expect(await dogs.findValue({
-      //   kennel: 'John\'s kennel'
-      // })).toHaveLength(3);
-      //
-      // expect(await dogs.findValue({
-      //   type: 'wolfdog',
-      //   kennel: 'John\'s kennel'
-      // })).toHaveLength(2);
-      //
-      // expect(await dogs.findValue({
-      //   type: 'pumi',
-      //   kennel: 'John\'s kennel'
-      // })).toHaveLength(1);
-      //
-      // expect(await dogs.findValue({
-      //   type: 'puli',
-      //   kennel: 'John\'s kennel'
-      // })).toHaveLength(0);
+      expect(await dogs.findValue({
+        Kennel: 'John\'s kennel'
+      })).toHaveLength(3);
+
+      expect(await dogs.findValue({
+        type: 'wolfdog',
+        Kennel: 'John\'s kennel'
+      })).toHaveLength(2);
+
+      expect(await dogs.findValue({
+        type: 'pumi',
+        Kennel: 'John\'s kennel'
+      })).toHaveLength(1);
+
+      expect(await dogs.findValue({
+        type: 'puli',
+        Kennel: 'John\'s kennel'
+      })).toHaveLength(0);
 
     });
 

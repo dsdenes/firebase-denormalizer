@@ -10,7 +10,7 @@ firebase.initializeApp(<your config>);
 
 import FirebaseDenormalizer from 'firebase-denormalizer';
 const modelDenormalizer = FirebaseDenormalizer(firebase.database());
-const dogs = modelDenormalizer('dogs');
+const dogs = modelDenormalizer('Dogs');
 
 dogs.filterableProperty('type');
 dogs.filterableProperty('kennel');
@@ -25,21 +25,21 @@ dogs.filterableProperty('kennel');
   /*
    * Automatically creates and housekeeps you these denormalized collections:
    *
-   * dogs: {
+   * Dogs: {
    *   -KlzBG8yTrXZ5SG37mIa: {
    *     name: 'Lolly',
    *     type: 'wolfdog',
-   *     kennel: 'John Doe Kennel'
+   *     Kennel: 'John Doe Kennel'
    *   }
    * }
    *
-   * dogTypes: {
+   * Dog-types: {
    *   'wolfdog': {
    *     -KlzBG8yTrXZ5SG37mIa: true
    *   }
    * }
    *
-   * dogKennels: {
+   * Dog-Kennels: {
    *   'johnDoeKennel': {
    *     -KlzBG8yTrXZ5SG37mIa: true
    *   }
@@ -52,7 +52,7 @@ dogs.filterableProperty('kennel');
    */
   await dogs.findValue({
     type: 'wolfdog',
-    kennel: 'John Doe Kennel',
+    Kennel: 'John Doe Kennel',
     name: 'Lolly'
   });
 

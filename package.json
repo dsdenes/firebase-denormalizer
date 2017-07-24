@@ -7,6 +7,8 @@
   "license": "MIT",
   "scripts": {
     "test": "jest src/",
+    "test:lib": "jest --forceExit lib/",
+    "pretest:lib": "yarn build",
     "watch": "jest src/ --watch",
     "build": "babel src/ -d lib",
     "prepublish": "yarn build",
@@ -23,10 +25,10 @@
     "firebase": "^4.1.4",
     "flow-bin": "^0.51.0",
     "jest": "^20.0.4",
-    "regenerator-runtime": "^0.10.5"
+    "regenerator-runtime": "^0.10.5",
+    "dotenv": "^4.0.0"
   },
   "dependencies": {
-    "config": "^1.26.1",
     "firebase-encode": "^0.0.5",
     "lodash.compact": "^3.0.1",
     "lodash.flattendeep": "^4.4.0",

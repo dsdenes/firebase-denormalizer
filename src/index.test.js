@@ -1,17 +1,17 @@
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 import {
   default as FirebaseDenormalizer,
   getPathString,
-  getPathArray,
   getDenormalizedCollectionName,
   getKey
 } from './index';
 
-import config from 'config';
 import firebase from 'firebase';
-
-firebase.initializeApp(config.get('firebase'));
+firebase.initializeApp(JSON.parse(process.env.FIREBASE));
 
 /*
 * firebase.ref()

@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/dsdenes/firebase-denormalizer/tree/master.svg?style=svg)](https://circleci.com/gh/dsdenes/firebase-denormalizer/tree/master)
 ## Install
 ```bash
 $ npm install firebase-denormalizer

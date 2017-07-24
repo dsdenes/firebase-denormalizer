@@ -19,7 +19,7 @@ dogs.filterableProperty('kennel');
   await dogs.push({
     name: 'Lolly',
     type: 'wolfdog',
-    kennel: 'John Doe Kennel'
+    Kennel: 'John Doe Kennel'
   });
 
   /*
